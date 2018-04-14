@@ -9,3 +9,4 @@ Usage
 Checks the validity of a manifest.
 
 Returns `{ valid: true, errors: [] }` if the manifest is valid, and `{ valid: false, errors: [...] }` if errors were found
+
