@@ -102,3 +102,73 @@ tape('valid manifest with catalogs and idPrefixes', function(t) {
 	t.deepEqual(result.errors, [], 'empty errors')
 	t.end()
 })
+
+tape('catalog validation - invalid catalog', function(t) {
+	let result = linter.lintManifest({
+		id: 'org.myexampleaddon',
+		version: '1.0.0',
+		name: 'simple example',
+		resources: ['stream'],
+		types: ['movie'],
+		catalogs: [{}],
+		idPrefixes: [],
+	})
+
+	t.equal(result.valid, false, 'invalid manifest')
+	t.equal(result.errors.length, 1, 'errors is right length')
+	t.equal(result.errors[0].message, 'manifest.catalogs[0]: id and type must be string properties')
+	t.end()
+})
+
+tape('catalog validation - valid catalog', function(t) {
+	let result = linter.lintManifest({
+		id: 'org.myexampleaddon',
+		version: '1.0.0',
+		name: 'simple example',
+		resources: ['stream'],
+		types: ['movie'],
+		catalogs: [{ id: 'top', type: 'movie', extraSupported: [] }],
+		idPrefixes: [],
+	})
+
+	t.equal(result.valid, true, 'valid manifest')
+	t.deepEqual(result.errors, [], 'empty errors')
+	t.end()
+})
+
+tape('catalog validation - validating multiple catalogs', function(t) {
+	let result = linter.lintManifest({
+		id: 'org.myexampleaddon',
+		version: '1.0.0',
+		name: 'simple example',
+		resources: ['stream'],
+		types: ['movie'],
+		catalogs: [
+			{ id: 'top', type: 'movie', extraSupported: [] },
+			{ }
+		],
+		idPrefixes: [],
+	})
+
+	t.equal(result.valid, false, 'invalid manifest')
+	t.equal(result.errors.length, 1, 'errors is right length')
+	t.equal(result.errors[0].message, 'manifest.catalogs[1]: id and type must be string properties')
+	t.end()
+})
+
+
+tape('catalog validation - extraSupported/extraRequired', function(t) {
+	let result = linter.lintManifest({
+		id: 'org.myexampleaddon',
+		version: '1.0.0',
+		name: 'simple example',
+		resources: ['stream'],
+		types: ['movie'],
+		catalogs: [{ id: 'top', type: 'movie', extraSupported: true }],
+		idPrefixes: [],
+	})
+
+	t.equal(result.valid, false, 'invalid manifest')
+	t.equal(result.errors[0].message, 'manifest.catalogs[0]: extraSupported must be an array')
+	t.end()
+})
