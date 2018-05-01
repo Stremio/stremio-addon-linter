@@ -20,6 +20,7 @@ tape('invalid - multiple errors', function(t) {
 	let result = linter.lintManifest({ })
 	t.equal(result.valid, false, 'invalid manifest')
 	t.equal(result.errors.length, 5) // id, name, version, resource, types
+	console.log(result.errors)
 	t.end()
 })
 
@@ -33,7 +34,7 @@ tape('invalid version', function(t) {
 	})
 
 	t.equal(result.valid, false, 'invalid manifest')
-	t.equal(result.errors[0].message, 'manifest.version must be a valid semver version')
+	t.equal(result.errors[0].message, 'manifest.version must be a valid semver string')
 	t.end()
 })
 
@@ -169,6 +170,6 @@ tape('catalog validation - extraSupported/extraRequired', function(t) {
 	})
 
 	t.equal(result.valid, false, 'invalid manifest')
-	t.equal(result.errors[0].message, 'manifest.catalogs[0]: extraSupported must be an array')
+	t.equal(result.errors[0].message, 'manifest.catalogs[0].extraSupported must be an array')
 	t.end()
 })
