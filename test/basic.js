@@ -20,7 +20,6 @@ tape('invalid - multiple errors', function(t) {
 	let result = linter.lintManifest({ })
 	t.equal(result.valid, false, 'invalid manifest')
 	t.equal(result.errors.length, 5) // id, name, version, resource, types
-	console.log(result.errors)
 	t.end()
 })
 
