@@ -5,14 +5,14 @@ const linter = require('../')
 tape('invalid manifest - undefined', function(t) {
 	let result = linter.lintManifest()
 	t.equal(result.valid, false, 'invalid manifest')
-	t.equal(result.errors[0].message, 'manifest should be an object')
+	t.equal(result.errors[0].message, 'manifest must be an object')
 	t.end()
 })
 
 tape('invalid manifest - not an object', function(t) {
 	let result = linter.lintManifest('test')
 	t.equal(result.valid, false, 'invalid manifest')
-	t.equal(result.errors[0].message, 'manifest should be an object')
+	t.equal(result.errors[0].message, 'manifest must be an object')
 	t.end()
 })
 
@@ -33,7 +33,7 @@ tape('invalid version', function(t) {
 	})
 
 	t.equal(result.valid, false, 'invalid manifest')
-	t.equal(result.errors[0].message, 'manifest.version should be a valid semver version')
+	t.equal(result.errors[0].message, 'manifest.version must be a valid semver version')
 	t.end()
 })
 
@@ -50,8 +50,8 @@ tape('invalid catalogs, idPrefixes', function(t) {
 
 	t.equal(result.valid, false, 'invalid manifest')
 	t.equal(result.errors.length, 2, 'errors is right length')
-	t.equal(result.errors[0].message, 'manifest.catalogs should be an array')
-	t.equal(result.errors[1].message, 'manifest.idPrefixes should be an array')
+	t.equal(result.errors[0].message, 'manifest.catalogs must be an array')
+	t.equal(result.errors[1].message, 'manifest.idPrefixes must be an array')
 	t.end()
 })
 
@@ -68,7 +68,7 @@ tape('invalid catalogs only', function(t) {
 
 	t.equal(result.valid, false, 'invalid manifest')
 	t.equal(result.errors.length, 1, 'errors is right length')
-	t.equal(result.errors[0].message, 'manifest.idPrefixes should be an array')
+	t.equal(result.errors[0].message, 'manifest.idPrefixes must be an array')
 	t.end()
 })
 
