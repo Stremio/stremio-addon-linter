@@ -199,7 +199,7 @@ tape('collection - valid collection', function(t) {
 		catalogs: [{ id: 'top', type: 'movie' }],
 		idPrefixes: [],
 	}
-	var col = [{ transportUrl: 'https://test.com', transportType: 'http', manifest: manifest }]
+	var col = [{ transportUrl: 'https://test.com', transportName: 'http', manifest: manifest }]
 
 	let result = linter.lintCollection(col)
 	t.equal(result.valid, true, 'valid collection')
