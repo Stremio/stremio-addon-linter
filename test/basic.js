@@ -203,6 +203,6 @@ tape('collection - valid collection', function(t) {
 
 	let result = linter.lintCollection(col)
 	t.equal(result.valid, true, 'valid collection')
-	t.equal(result.errors.length, 0, 'no errors')
+	t.deepEqual(result.errors, [], 'no errors')
 	t.end()
 })
