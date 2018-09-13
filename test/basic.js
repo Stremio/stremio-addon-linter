@@ -72,6 +72,21 @@ tape('invalid catalogs only', function(t) {
 	t.end()
 })
 
+tape('invalid resources', function(t) {
+	let result = linter.lintManifest({
+		id: 'org.myexampleaddon',
+		version: '1.0.0',
+		name: 'simple example',
+		resources: ['foo'],
+		types: ['movie'],
+	})
+
+	t.equal(result.valid, false, 'invalid manifest')
+	t.equal(result.errors.length, 1, 'errors is right length')
+	t.equal(result.errors[0].message, 'manifest.resources: invalid value foo')
+	t.end()
+})
+
 tape('valid manifest', function(t) {
 	let result = linter.lintManifest({
 		id: 'org.myexampleaddon',
