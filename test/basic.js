@@ -77,7 +77,7 @@ tape('invalid resources', function(t) {
 		id: 'org.myexampleaddon',
 		version: '1.0.0',
 		name: 'simple example',
-		resources: ['foo'],
+		resources: ['foo', 'meta'],
 		types: ['movie'],
 	})
 
