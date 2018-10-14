@@ -8,7 +8,7 @@ Checks the validity of Stremio add-ons. Used by `stremio-addon-sdk`.
 
 Checks the validity of a manifest.
 
-Returns `{ valid: true, errors: [] }` if the manifest is valid
+Returns `{ valid: true, errors: [], warnings: [...] }` if the manifest is valid
 
-Returns `{ valid: false, errors: [...] }` if errors were found
+Returns `{ valid: false, errors: [...], warnings: [...] }` if errors were found
 
