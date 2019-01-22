@@ -19,7 +19,7 @@ tape('invalid manifest - not an object', function(t) {
 tape('invalid - multiple errors', function(t) {
 	let result = linter.lintManifest({ })
 	t.equal(result.valid, false, 'invalid manifest')
-	t.equal(result.errors.length, 5) // id, name, version, resource, types
+	t.equal(result.errors.length, 6) // id, name, version, resource, types, catalogs
 	t.end()
 })
 
@@ -30,6 +30,7 @@ tape('invalid version', function(t) {
 		name: 'simple example',
 		resources: ['stream'],
 		types: ['movie'],
+		catalogs: [],
 	})
 
 	t.equal(result.valid, false, 'invalid manifest')
@@ -79,6 +80,7 @@ tape('unknown resources', function(t) {
 		name: 'simple example',
 		resources: ['foo', 'meta', { name: 'stream' }],
 		types: ['movie'],
+		catalogs: [],
 	})
 
 	t.equal(result.valid, true, 'manifest is still valid')
@@ -94,6 +96,7 @@ tape('valid manifest', function(t) {
 		name: 'simple example',
 		resources: ['stream'],
 		types: ['movie'],
+		catalogs: [],
 	})
 
 	t.equal(result.valid, true, 'valid manifest')
