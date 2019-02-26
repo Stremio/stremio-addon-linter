@@ -56,6 +56,21 @@ tape('invalid catalogs, idPrefixes', function(t) {
 	t.end()
 })
 
+tape('idPrefixes: null is ignored', function(t) {
+	let result = linter.lintManifest({
+		id: 'org.myexampleaddon',
+		version: '1.0.0',
+		name: 'simple example',
+		resources: ['stream'],
+		types: ['movie'],
+		catalogs: [],
+		idPrefixes: null,
+	})
+
+	t.equal(result.valid, true, 'valid manifest')
+	t.end()
+})
+
 tape('invalid catalogs only', function(t) {
 	let result = linter.lintManifest({
 		id: 'org.myexampleaddon',
