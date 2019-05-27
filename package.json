@@ -1,6 +1,6 @@
 {
   "name": "stremio-addon-linter",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "description": "Checks the validity of Stremio add-ons (protocol v3)",
   "main": "index.js",
   "scripts": {
