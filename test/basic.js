@@ -222,6 +222,24 @@ tape('catalog validation - behaviorHints', function(t) {
 	t.equal(result.errors[0].message, 'manifest.behaviorHints must be an object')
 	t.end()
 })
+
+tape('catalog validation - behaviorHints', function(t) {
+	let result = linter.lintManifest({
+		id: 'org.myexampleaddon',
+		version: '1.0.0',
+		name: 'simple example',
+		resources: ['stream'],
+		types: ['movie'],
+		idPrefixes: [],
+		behaviorHints: { p2p: {} },
+		catalogs: []
+	})
+
+	t.equal(result.valid, false, 'invalid manifest')
+	t.equal(result.errors[0].message, 'manifest.behaviorHints.p2p must be a boolean')
+	t.end()
+})
+
 tape('collection - not an array', function(t) {
 	let result = linter.lintCollection(false)
 
