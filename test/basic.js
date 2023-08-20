@@ -206,6 +206,38 @@ tape('catalog validation - extraSupported/extraRequired', function(t) {
 	t.end()
 })
 
+tape('catalog validation - extra new format - OK', function(t) {
+	let result = linter.lintManifest({
+		id: 'org.myexampleaddon',
+		version: '1.0.0',
+		name: 'simple example',
+		resources: ['stream'],
+		types: ['movie'],
+		catalogs: [{ id: 'top', type: 'movie', extra: [{ name: 'skip', isRequired: true }] }],
+		idPrefixes: [],
+	})
+
+	t.equal(result.valid, true, 'valid manifest')
+	t.end()
+})
+
+tape('catalog validation - extra new format - NOT OK', function(t) {
+	let result = linter.lintManifest({
+		id: 'org.myexampleaddon',
+		version: '1.0.0',
+		name: 'simple example',
+		resources: ['stream'],
+		types: ['movie'],
+		catalogs: [{ id: 'top', type: 'movie', extra: [{ name: 0, isRequired: 0 }] }],
+		idPrefixes: [],
+	})
+
+	t.equal(result.valid, false, 'invalid manifest')
+	t.equal(result.errors[0].message, 'manifest.catalogs[0].extra[0].isRequired must be a boolean')
+	t.equal(result.errors[1].message, 'manifest.catalogs[0].extra[0].name must be a string')
+	t.end()
+})
+
 tape('catalog validation - behaviorHints', function(t) {
 	let result = linter.lintManifest({
 		id: 'org.myexampleaddon',
