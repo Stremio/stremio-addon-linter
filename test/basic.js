@@ -93,7 +93,7 @@ tape('unknown resources', function(t) {
 		id: 'org.myexampleaddon',
 		version: '1.0.0',
 		name: 'simple example',
-		resources: ['foo', 'meta', { name: 'stream' }],
+		resources: ['foo', 'meta', { name: 'stream' }, 'player', { name: 'library' }],
 		types: ['movie'],
 		catalogs: [],
 	})
