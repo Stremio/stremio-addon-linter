@@ -93,7 +93,7 @@ tape('unknown resources', function(t) {
 		id: 'org.myexampleaddon',
 		version: '1.0.0',
 		name: 'simple example',
-		resources: ['foo', 'meta', { name: 'stream' }, 'player', { name: 'library' }],
+		resources: ['foo', 'meta', { name: 'stream', types: ['movie'] }, 'player', { name: 'library', types: ['movie'] }],
 		types: ['movie'],
 		catalogs: [],
 	})
@@ -272,6 +272,95 @@ tape('catalog validation - behaviorHints', function(t) {
 	t.end()
 })
 
+const validBase = {
+	id: 'org.myexampleaddon',
+	version: '1.0.0',
+	name: 'simple example',
+	resources: ['stream'],
+	types: ['movie'],
+	catalogs: [],
+}
+
+function lintWith(props) {
+	return linter.lintManifest(Object.assign({}, validBase, props))
+}
+
+tape('null entries are reported instead of throwing', function(t) {
+	let result = lintWith({ behaviorHints: null })
+	t.equal(result.valid, false, 'behaviorHints: null is invalid')
+	t.equal(result.errors[0].message, 'manifest.behaviorHints must be an object')
+
+	result = lintWith({ catalogs: [null] })
+	t.equal(result.errors[0].message, 'manifest.catalogs[0] must be an object')
+
+	result = lintWith({ catalogs: [{ id: 'top', type: 'movie', extra: [null] }] })
+	t.equal(result.errors[0].message, 'manifest.catalogs[0].extra[0] must be an object')
+	t.end()
+})
+
+tape('manifest must not be an array', function(t) {
+	let result = linter.lintManifest([])
+	t.equal(result.valid, false, 'invalid manifest')
+	t.equal(result.errors[0].message, 'manifest must be an object')
+	t.end()
+})
+
+tape('resources: entries must be strings or objects with a name', function(t) {
+	let result = lintWith({ resources: [{ types: ['movie'] }, 5] })
+	t.equal(result.valid, false, 'invalid manifest')
+	t.equal(result.errors[0].message, 'manifest.resources[0] must be a string or an object with a string name')
+	t.equal(result.errors[1].message, 'manifest.resources[1] must be a string or an object with a string name')
+	t.end()
+})
+
+tape('resources: full notation without types warns', function(t) {
+	let result = lintWith({ resources: [{ name: 'stream' }] })
+	t.equal(result.valid, true, 'still valid')
+	t.equal(result.warnings.length, 1, 'one warning')
+	t.equal(result.warnings[0].message, 'manifest.resources[0] (stream) has no types, so Stremio will never request it; set types or use the short notation "stream"')
+	t.end()
+})
+
+tape('resources: types and idPrefixes must be string arrays', function(t) {
+	let result = lintWith({ resources: [{ name: 'stream', types: 'movie', idPrefixes: ['tt', 1] }] })
+	t.equal(result.valid, false, 'invalid manifest')
+	t.equal(result.errors[0].message, 'manifest.resources[0].types must be an array')
+	t.equal(result.errors[1].message, 'manifest.resources[0].idPrefixes must only contain strings')
+
+	result = lintWith({ resources: [{ name: 'stream', types: ['movie'], idPrefixes: null }] })
+	t.equal(result.valid, true, 'null idPrefixes on a resource is fine')
+	t.end()
+})
+
+tape('types and idPrefixes must only contain strings', function(t) {
+	let result = lintWith({ types: ['movie', 5], idPrefixes: ['tt', 1] })
+	t.equal(result.valid, false, 'invalid manifest')
+	t.equal(result.errors[0].message, 'manifest.types must only contain strings')
+	t.equal(result.errors[1].message, 'manifest.idPrefixes must only contain strings')
+	t.end()
+})
+
+tape('behaviorHints.epgProvider must be a boolean', function(t) {
+	let result = lintWith({ behaviorHints: { epgProvider: 'yes' } })
+	t.equal(result.valid, false, 'invalid manifest')
+	t.equal(result.errors[0].message, 'manifest.behaviorHints.epgProvider must be a boolean')
+
+	result = lintWith({ behaviorHints: { epgProvider: true } })
+	t.equal(result.valid, true, 'boolean epgProvider is fine')
+	t.end()
+})
+
+tape('catalog extra: options and optionsLimit', function(t) {
+	let result = lintWith({ catalogs: [{ id: 'top', type: 'movie', extra: [{ name: 'genre', options: 'Action', optionsLimit: '2' }] }] })
+	t.equal(result.valid, false, 'invalid manifest')
+	t.equal(result.errors[0].message, 'manifest.catalogs[0].extra[0].options must be an array')
+	t.equal(result.errors[1].message, 'manifest.catalogs[0].extra[0].optionsLimit must be a non-negative integer')
+
+	result = lintWith({ catalogs: [{ id: 'top', type: 'movie', extra: [{ name: 'genre', options: null }, { name: 'skip', options: ['a'], optionsLimit: 2 }] }] })
+	t.equal(result.valid, true, 'null options and a numeric optionsLimit are fine')
+	t.end()
+})
+
 tape('collection - not an array', function(t) {
 	let result = linter.lintCollection(false)
 
@@ -284,7 +373,16 @@ tape('collection - invalid members', function(t) {
 	let result = linter.lintCollection([true, { }])
 
 	t.equal(result.valid, false, 'invalid collection')
-	t.equal(result.errors.length, 6, '6 errors') // 2x3
+	t.equal(result.errors.length, 4, '4 errors') // 1 for the non-object, 3 for the empty object
+	t.equal(result.errors[0].message, '0: must be an object')
+	t.end()
+})
+
+tape('collection - null member does not throw', function(t) {
+	let result = linter.lintCollection([null])
+
+	t.equal(result.valid, false, 'invalid collection')
+	t.equal(result.errors[0].message, '0: must be an object')
 	t.end()
 })
 
